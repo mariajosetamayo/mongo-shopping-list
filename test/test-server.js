@@ -11,6 +11,9 @@ chai.use(chaiHttp);
 
 // TESTS for shopping list
 describe('Shopping List', function() {
+    
+    var itemID; 
+    
     before(function(done) { //seed db by adding sample data to use in tests
         server.runServer(function() {
             Item.remove(function() {
@@ -57,7 +60,7 @@ describe('Shopping List', function() {
             res.body.name.should.be.a('string');
             res.body._id.should.be.a('string');
             res.body.name.should.equal('Kale');
-            
+            itemID=res.body._id;
             // Test database
             
             Item.count({}, function( err, count){
@@ -77,8 +80,8 @@ describe('Shopping List', function() {
     
     it('should edit a new item on PUT', function(done) { 
         chai.request(app) 
-        .put('/items/57fef191c6e2422cc86f265d') 
-        .send({name: 'carrot', id:'57fef191c6e2422cc86f265d'}) 
+        .put('/items/'+itemID) 
+        .send({name: 'carrot', id:itemID}) 
         .end(function(err, res) { 
             should.equal(err, null); 
             res.should.have.status(201); 
@@ -90,19 +93,18 @@ describe('Shopping List', function() {
             res.body._id.should.be.a('string'); 
             res.body.name.should.equal('carrot');
 
+
             // tests database
             Item.count({}, function( err, count){
                       count.should.equal(4); //test del length
-                  })
-            Item.findById(res.body._id,
-                    function(err, items){
-                        console.log("error"+ err)
-                        console.log("items"+ items)
-                        items.name.should.equal('carrot');
-            done(); 
+                  });
             
-            //find one y ver si se actualizo.
-            });
+             Item.findOne({_id: itemID}, 
+                    function(err, items){
+                        should.not.equal(items, null);
+                        items.name.should.equal('carrot');  //find one y ver si se actualizo.
+                    done();
+                });
         });       
     }); 
     
@@ -222,9 +224,9 @@ describe('Shopping List', function() {
     
 
     after(function(done) { // run after test is done, removes all items from db
-        Item.remove(function() {
+      //  Item.remove(function() {
             done();
-        });
+    //    });
     });
 });
 
