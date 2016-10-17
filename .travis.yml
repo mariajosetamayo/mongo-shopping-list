@@ -8,3 +8,10 @@ addons:
     - mongodb-3.2-precise
     packages:
     - mongodb-org-server
+deploy:
+  provider: heroku
+  api_key:
+    secure: AsLgZiREVxFh1ntnf6X/+y9SeR/HLhFLbv7dF6qmsqyhuj/myyESX8K5/pFbDHl9TwITY9GHGyKWBj/SiopDK6yGfq1MpRlP7x8L0tfq7Xxr/YI5JKfhx16zx3FZeFtAYNV+I1+qSVqY/HUsXoja9bK02CBdGzrjx9X0lcroUi/E1df8RbGkBfGd4V9IxYbV9a1+zPspDCmRBN7RTm1/Y8Szo0chzpUeAFf3sr3n5UWssZF2lDRevwSTLxGp97c4XvLgjkmGpiiLNGAS6xd2D49KPBYR0zE1frJ2ArUQqFPh8sOVYcf5cRAFbe7D+EyJPqJEmDfLs4R3E2aHuKdCERxtcCEP1Ki2HT1/Dq34NonlaCWm6oReTTWUYyEz5eYefX2Kc7jSwPqOzhr7AXNDC0HfTalS7u5v/+4tZ1CxP5Rx+0fS4TOGfYgWW9azOud/dPRqy6ktrsV4xPZ7ghASzD4dSG+rHT5pN6sOryHqZ7UiSd2pumA03KPadEbo6Ry9RfVSRe97x+tbGZa3AF3BGj8Uww0EYXVqMPn64aRRbuO23S9Ul7sgiDH+7+Slb9EcmDVccqtcPmjBuPYNYtp5JBOLBNoEM5icL6Uauy5wJMOjOmbi2Q40Hxl1Bfw48D7mQ03J3zxpwr9BaSUSR+mulWPmVXfqKF2W3Sk4wKKvyaw=
+  app: infinite-headland-96281
+  on:
+    repo: mariajosetamayo/mongo-shopping-list

@@ -60,15 +60,17 @@ app.post('/items', function(req, res) {
 app.put('/items/:id', function(req, res){
         var queryID = {_id: req.params.id}
         var updateItem = {name: req.body.name, _id: req.params.id}
+        console.log("UPDATED ITEM", updateItem)
         Item.findOneAndUpdate(queryID, updateItem,
         function(err, items){
             if(err) {
                 return res.status(500).json({
                 message: 'Internal Server Error'});
             }
-            
+             console.log("UPDATED ITEM", updateItem)
             res.status(201).json(updateItem)
         });
+         console.log("UPDATED ITEM", updateItem)
 });
 
 app.delete('/items/:id', function(req, res){

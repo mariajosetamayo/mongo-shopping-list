@@ -1,12 +1,10 @@
-global.DATABASE_URL = 'mongodb://localhost/shopping-list-test'; //set the glodal.DATABASE_URL variable to make app user testing db and not dev or production db
-
+global.DATABASE_URL = 'mongodb://jack:jack@ds023118.mlab.com:23118/blackjack'; //set the glodal.DATABASE_URL variable to make app user testing db and not dev or production db
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-
 var server = require('../server.js');
 var Item = require('../models/item');
-
 var should = chai.should();
+var expect = chai.expect();
 var app = server.app;
 
 chai.use(chaiHttp);
@@ -15,10 +13,12 @@ chai.use(chaiHttp);
 describe('Shopping List', function() {
     before(function(done) { //seed db by adding sample data to use in tests
         server.runServer(function() {
-            Item.create({name: 'Broad beans'},
-                        {name: 'Tomatoes'},
-                        {name: 'Peppers'}, function() {
+            Item.remove(function() {
+                Item.create({name: 'Broad beans'},
+                {name: 'Tomatoes'},
+                {name: 'Peppers'}, function() {
                 done();
+                });
             });
         });
     });
@@ -36,9 +36,9 @@ describe('Shopping List', function() {
             res.body[0].should.have.property('name');
             res.body[0].name.should.be.a('string');
             res.body[0]._id.should.be.a('string');
-            // res.body[0].name.should.equal('Broad beans');
-            // res.body[1].name.should.equal('Tomatoes');
-            // res.body[2].name.should.equal('Peppers');
+            res.body[0].name.should.equal('Broad beans');
+            res.body[1].name.should.equal('Tomatoes');
+            res.body[2].name.should.equal('Peppers');
             done();
         });
     });
@@ -57,14 +57,28 @@ describe('Shopping List', function() {
             res.body.name.should.be.a('string');
             res.body._id.should.be.a('string');
             res.body.name.should.equal('Kale');
+            
+            // Test database
+            
+            Item.count({}, function( err, count){
+                      count.should.equal(4); //test del length
+                  })
+            Item.findOne({name: 'Kale'}, 
+                    function(err, items){
+                        console.log("error"+ err)
+                        console.log("items"+ items)
+                        items.name.should.equal('Kale');
             done();
+            // buscar que findOne usando res.body._id
+            // longitud ++
+            });
         });
     });
     
     it('should edit a new item on PUT', function(done) { 
         chai.request(app) 
-        .put('/items/57fef14d2f45532cb6445a01') 
-        .send({'name': 'carrot'}) 
+        .put('/items/57fef191c6e2422cc86f265d') 
+        .send({name: 'carrot', id:'57fef191c6e2422cc86f265d'}) 
         .end(function(err, res) { 
             should.equal(err, null); 
             res.should.have.status(201); 
@@ -74,8 +88,21 @@ describe('Shopping List', function() {
             res.body.should.have.property('_id'); 
             res.body.name.should.be.a('string');
             res.body._id.should.be.a('string'); 
-            res.body.name.should.equal('carrot'); 
+            res.body.name.should.equal('carrot');
+
+            // tests database
+            Item.count({}, function( err, count){
+                      count.should.equal(4); //test del length
+                  })
+            Item.findById(res.body._id,
+                    function(err, items){
+                        console.log("error"+ err)
+                        console.log("items"+ items)
+                        items.name.should.equal('carrot');
             done(); 
+            
+            //find one y ver si se actualizo.
+            });
         });       
     }); 
     
@@ -90,7 +117,16 @@ describe('Shopping List', function() {
                   res.body.should.have.property('_id');
                   res.body._id.should.be.a('string');
                   res.body._id.should.equal('57fef191c6e2422cc86f265d');
-                  done();
+                  
+                  //test db
+                  Item.count({}, function( err, count){
+                      count.should.equal(4); //test del length
+                  })
+                  Item.findOne({_id: '57fef191c6e2422cc86f265d'}, 
+                    function(err, items){
+                        should.equal(items, null);
+                    done();
+                });
             });
       });
      
